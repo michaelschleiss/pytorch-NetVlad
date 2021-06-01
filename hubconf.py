@@ -11,13 +11,14 @@ def vgg16_netvlad(pretrained=False):
     # capture only feature part and remove last relu and maxpool
     layers = list(encoder.features.children())[:-2]
     encoder = nn.Sequential(*layers)
-
+    model = nn.Module() 
+    model.add_module('encoder', encoder)
     net_vlad = netvlad.NetVLAD(num_clusters=64, dim=512, vladv2=False)
-    model = nn.Sequential(encoder, net_vlad)
+    model.add_module('pool', net_vlad)
 
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/vgg16_netvlad.pth.tar', map_location=torch.device('cpu'))
     model.load_state_dict(resume_ckpt['state_dict'])
-
+    model = nn.Sequential(list(model.children()))
 
 
     return model
