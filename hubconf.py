@@ -35,7 +35,7 @@ def vgg16_netvlad_flip_v_and_h(pretrained=False):
     print('BAAAH===========================')
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/vgg16_netvlad_rot_query.pth.tar', map_location=torch.device('cpu'))
     print(resume_ckpt.keys())
-    #model.load_state_dict(resume_ckpt)
+    model.load_state_dict(resume_ckpt['state_dict'])
 
 
 
