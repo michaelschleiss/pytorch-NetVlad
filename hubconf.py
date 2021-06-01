@@ -9,7 +9,7 @@ class EmbedNet(nn.Module):
         super(EmbedNet, self).__init__()
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-        encoder = models.vgg16(pretrained=pretrained)
+        encoder = models.vgg16(pretrained=False)
         # capture only feature part and remove last relu and maxpool
         layers = list(encoder.features.children())[:-2]
         encoder = nn.Sequential(*layers)
