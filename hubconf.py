@@ -32,10 +32,16 @@ def vgg16_netvlad_flip_v_and_h(pretrained=False):
     model.add_module('encoder', encoder)
     net_vlad = netvlad.NetVLAD(num_clusters=64, dim=512, vladv2=False)
     model.add_module('pool', net_vlad)
-    print('BAAAH===========================')
+    
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/vgg16_netvlad_rot_query.pth.tar', map_location=torch.device('cpu'))
-    print(resume_ckpt.keys())
-    model.load_state_dict(resume_ckpt['state_dict'])
+    from collections import OrderedDict
+    new_state_dict = OrderedDict()
+    for k, v in resume_ckpt['state_dict'].items():
+        name = k.replace('.module.','') # remove `module.`
+        new_state_dict[name] = v
+    # load params
+    model.load_state_dict(new_state_dict)
+    #model.load_state_dict(resume_ckpt['state_dict'])
 
 
 
