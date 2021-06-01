@@ -33,7 +33,7 @@ def vgg16_netvlad_flip_v_and_h(pretrained=False):
     net_vlad = netvlad.NetVLAD(num_clusters=64, dim=512, vladv2=False)
     model.add_module('pool', net_vlad)
 
-    resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/vgg16_netvlad_rot_query.pth.tar', map_location=torch.device('cpu'))
+    #resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/vgg16_netvlad_rot_query.pth.tar', map_location=torch.device('cpu'))
     print(resume_ckpt.keys())
     #model.load_state_dict(resume_ckpt)
 
