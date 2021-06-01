@@ -13,6 +13,5 @@ def vgg16_netvlad(pretrained=False):
     model.add_module('encoder', encoder)
     net_vlad = netvlad.NetVLAD(num_clusters=64, dim=512, vladv2=False)
     model.add_module('pool', net_vlad)
-    model = models.create('embednetpca', base_model, pool_layer)
     model.load_state_dict(torch.hub.load_state_dict_from_url('https://github.com/yxgeee/OpenIBL/releases/download/v0.1.0-beta/vgg16_netvlad.pth', map_location=torch.device('cpu')))
     return model
