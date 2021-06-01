@@ -37,7 +37,7 @@ def vgg16_netvlad_flip_v_and_h(pretrained=False):
     from collections import OrderedDict
     new_state_dict = OrderedDict()
     for k, v in resume_ckpt['state_dict'].items():
-        name = k.replace('.module.','') # remove `module.`
+        name = k.replace('module.','') # remove `module.`
         new_state_dict[name] = v
     # load params
     model.load_state_dict(new_state_dict)
