@@ -15,7 +15,7 @@ def vgg16_netvlad(pretrained=False):
     model.add_module('pool', net_vlad)
 
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/yxgeee/OpenIBL/releases/download/v0.1.0-beta/vgg16_netvlad.pth', map_location=torch.device('cpu'))
-    checkpoint = torch.load(resume_ckpt)
+    checkpoint = torch.load_state_dict(resume_ckpt)
     #model.load_state_dict(checkpoint['state_dict'])
     #model = model.to(device)
     #model.eval()    
