@@ -12,7 +12,7 @@ class EmbedNet(nn.Module):
         encoder = models.vgg16(pretrained=False)
         # capture only feature part and remove last relu and maxpool
         layers = list(encoder.features.children())[:-2]
-        encoder = nn.Sequential(*layers)
+        self.encoder = nn.Sequential(*layers)
         #self.add_module('encoder', encoder)
         self.pool = netvlad.NetVLAD(num_clusters=64, dim=512, vladv2=False)
         #self.add_module('pool', net_vlad)
