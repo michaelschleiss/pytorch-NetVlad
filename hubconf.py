@@ -15,6 +15,7 @@ def vgg16_netvlad(pretrained=False):
     model.add_module('pool', net_vlad)
 
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/checkpoint.pth.tar', map_location=torch.device('cpu'))
+    print(resume_ckpt)
     checkpoint = torch.load(resume_ckpt, map_location=lambda storage, loc: storage)
     model.load_state_dict(checkpoint['state_dict'])
     model = model.to(device)
