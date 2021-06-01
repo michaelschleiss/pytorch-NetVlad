@@ -1,6 +1,7 @@
-dependencies = ['torch', 'sklearn']
+dependencies = ['torch']
 import torch
 import netvlad
+from torchvision import models
 
 def vgg16_netvlad(pretrained=False):
     encoder = models.vgg16(pretrained=pretrained)
