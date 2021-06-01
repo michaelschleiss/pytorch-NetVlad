@@ -18,8 +18,8 @@ def vgg16_netvlad(pretrained=False):
 
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/checkpoint.pth.tar', map_location=torch.device('cpu'))
     model.load_state_dict(resume_ckpt['state_dict'])
-    model = model.to(device)
-    model.eval()    
+
+
 
     return model
 
@@ -34,9 +34,9 @@ def vgg16_netvlad_flip_v_and_h(pretrained=False):
     model.add_module('pool', net_vlad)
 
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/vgg16_netvlad_rot_query.pth.tar', map_location=torch.device('cpu'))
-    model.load_state_dict(resume_ckpt['state_dict'])
+    model.load_state_dict(resume_ckpt)
 
-    model = model.to(device)
-    model.eval()    
+
+
 
     return model
