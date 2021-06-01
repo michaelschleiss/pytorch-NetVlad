@@ -1,5 +1,6 @@
 dependencies = ['torch']
 import torch
+from torch import nn
 import netvlad
 from torchvision import models
 
