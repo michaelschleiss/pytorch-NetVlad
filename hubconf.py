@@ -16,7 +16,7 @@ class EmbedNet(nn.Module):
         #self.add_module('encoder', encoder)
         self.pool = netvlad.NetVLAD(num_clusters=64, dim=512, vladv2=False)
         #self.add_module('pool', net_vlad)
-        print(self.state_dict())
+        print(self.state_dict().keys())
     def forward():
         x = self.encoder(x)
         x = self.pool(x)
