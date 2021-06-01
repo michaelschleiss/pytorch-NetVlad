@@ -1,4 +1,4 @@
-dependencies = ['torch']
+dependencies = ['torch', 'sklearn']
 import torch
 import netvlad
 
