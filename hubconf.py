@@ -42,6 +42,8 @@ def vgg16_netvlad_flip_v_and_h(pretrained=False):
     model.load_state_dict(new_state_dict)
     #model.load_state_dict(resume_ckpt['state_dict'])
 
+    return model
+
 def vgg16_netvlad_best_180deg(pretrained=False):
     model = EmbedNet()
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/vgg16_netvlad_model_best_180deg.pth.tar', map_location=torch.device('cpu'))
