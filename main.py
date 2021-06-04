@@ -24,6 +24,54 @@ from tensorboardX import SummaryWriter
 import numpy as np
 import netvlad
 
+import warnings
+warnings.filterwarnings("ignore")
+class GeneralizedMeanPooling(Module):
+    """Applies a 2D power-average adaptive pooling over an input signal composed of several input planes.
+    The function computed is: :math:`f(X) = pow(sum(pow(X, p)), 1/p)`
+        - At p = infinity, one gets Max Pooling
+        - At p = 1, one gets Average Pooling
+    The output is of size H x W, for any input size.
+    The number of output features is equal to the number of input planes.
+    Args:
+        output_size: the target output size of the image of the form H x W.
+                     Can be a tuple (H, W) or a single H for a square image H x H
+                     H and W can be either a ``int``, or ``None`` which means the size will
+                     be the same as that of the input.
+    """
+
+    def __init__(self, norm, output_size=1, eps=1e-6):
+        super(GeneralizedMeanPooling, self).__init__()
+        assert norm > 0
+        self.p = float(norm)
+        self.output_size = output_size
+        self.eps = eps
+
+    def forward(self, x):
+        x = x.clamp(min=self.eps).pow(self.p)
+        return F.adaptive_avg_pool2d(x, self.output_size).pow(1. / self.p)
+
+    def __repr__(self):
+        return self.__class__.__name__ + '(' \
+            + str(self.p) + ', ' \
+            + 'output_size=' + str(self.output_size) + ')'
+
+class GeM(nn.Module):
+    def __init__(self, p=3, eps=1e-6):
+        super(GeM,self).__init__()
+        self.p = nn.Parameter(torch.ones(1)*p)
+        self.eps = eps
+
+    def forward(self, x):
+        return self.gem(x, p=self.p, eps=self.eps)
+        
+    def gem(self, x, p=3, eps=1e-6):
+        return F.avg_pool2d(x.clamp(min=eps).pow(p), (x.size(-2), x.size(-1))).pow(1./p)
+        
+    def __repr__(self):
+        return self.__class__.__name__ + '(' + 'p=' + '{:.4f}'.format(self.p.data.tolist()[0]) + ', ' + 'eps=' + str(self.eps) + ')'
+
+
 parser = argparse.ArgumentParser(description='pytorch-NetVlad')
 parser.add_argument('--mode', type=str, default='train', help='Mode', choices=['train', 'test', 'cluster'])
 parser.add_argument('--batchSize', type=int, default=4, 
@@ -44,11 +92,11 @@ parser.add_argument('--momentum', type=float, default=0.9, help='Momentum for SG
 parser.add_argument('--nocuda', action='store_true', help='Dont use cuda')
 parser.add_argument('--threads', type=int, default=8, help='Number of threads for each data loader to use')
 parser.add_argument('--seed', type=int, default=123, help='Random seed to use.')
-parser.add_argument('--dataPath', type=str, default='/nfs/ibrahimi/data/', help='Path for centroid data.')
-parser.add_argument('--runsPath', type=str, default='/nfs/ibrahimi/runs/', help='Path to save runs to.')
+parser.add_argument('--dataPath', type=str, default='data/', help='Path for centroid data.')
+parser.add_argument('--runsPath', type=str, default='runs/', help='Path to save runs to.')
 parser.add_argument('--savePath', type=str, default='checkpoints', 
         help='Path to save checkpoints to in logdir. Default=checkpoints/')
-parser.add_argument('--cachePath', type=str, default=environ['TMPDIR'], help='Path to save cache to.')
+parser.add_argument('--cachePath', type=str, default='.TMPDIR', help='Path to save cache to.')
 parser.add_argument('--resume', type=str, default='', help='Path to load checkpoint from, for resuming training or testing.')
 parser.add_argument('--ckpt', type=str, default='latest', 
         help='Resume from latest or best checkpoint.', choices=['latest', 'best'])
@@ -58,10 +106,10 @@ parser.add_argument('--patience', type=int, default=10, help='Patience for early
 parser.add_argument('--dataset', type=str, default='pittsburgh', 
         help='Dataset to use', choices=['pittsburgh'])
 parser.add_argument('--arch', type=str, default='vgg16', 
-        help='basenetwork to use', choices=['vgg16', 'alexnet'])
+        help='basenetwork to use', choices=['vgg16', 'alexnet', 're_resnet'])
 parser.add_argument('--vladv2', action='store_true', help='Use VLAD v2')
 parser.add_argument('--pooling', type=str, default='netvlad', help='type of pooling to use',
-        choices=['netvlad', 'max', 'avg'])
+        choices=['netvlad', 'max', 'avg', 'gem'])
 parser.add_argument('--num_clusters', type=int, default=64, help='Number of NetVlad clusters. Default=64')
 parser.add_argument('--margin', type=float, default=0.1, help='Margin for triplet loss. Default=0.1')
 parser.add_argument('--split', type=str, default='val', help='Data split to use for testing. Default is val', 
@@ -398,16 +446,32 @@ if __name__ == "__main__":
                 for p in l.parameters():
                     p.requires_grad = False
 
-    if opt.mode.lower() == 'cluster' and not opt.vladv2:
-        layers.append(L2Norm())
+    elif opt.arch.lower() == 're_resnet':
+        encoder_dim = 2048
+        from backbone import ReResNet
+        CHECKPOINT_PATH = 'checkpoints/re_resnet50_c8_batch256-25b16846.pth'
+        CHECKPOINT = torch.load(CHECKPOINT_PATH)['state_dict']
 
-    encoder = nn.Sequential(*layers)
+        encoder = ReResNet(depth=50)
+        encoder.load_state_dict(CHECKPOINT, strict = False)
+                    # if using pretrained then only train conv5_1, conv5_2, and conv5_3
+        """layers = list(encoder.children())
+        for l in layers: 
+            for p in l.parameters():
+                print(p.requires_grad)"""
+
+        
+
+    #if opt.mode.lower() == 'cluster' and not opt.vladv2:
+    #    layers.append(L2Norm())
+
+    #encoder = nn.Sequential(*layers)
     model = nn.Module() 
     model.add_module('encoder', encoder)
 
     if opt.mode.lower() != 'cluster':
         if opt.pooling.lower() == 'netvlad':
-            net_vlad = netvlad.NetVLAD(num_clusters=opt.num_clusters, dim=encoder_dim, vladv2=opt.vladv2)
+            net_vlad = netvlad.NetVLAD(normalize_input=False, num_clusters=opt.num_clusters, dim=encoder_dim, vladv2=opt.vladv2)
             if not opt.resume: 
                 if opt.mode.lower() == 'train':
                     initcache = join(opt.dataPath, 'centroids', opt.arch + '_' + train_set.dataset + '_' + str(opt.num_clusters) +'_desc_cen.hdf5')
@@ -429,6 +493,9 @@ if __name__ == "__main__":
             model.add_module('pool', nn.Sequential(*[global_pool, Flatten(), L2Norm()]))
         elif opt.pooling.lower() == 'avg':
             global_pool = nn.AdaptiveAvgPool2d((1,1))
+            model.add_module('pool', nn.Sequential(*[global_pool, Flatten(), L2Norm()]))
+        elif opt.pooling.lower() == 'gem':
+            global_pool = GeM()
             model.add_module('pool', nn.Sequential(*[global_pool, Flatten(), L2Norm()]))
         else:
             raise ValueError('Unknown pooling type: ' + opt.pooling)
