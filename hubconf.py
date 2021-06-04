@@ -42,7 +42,30 @@ def vgg16_netvlad_flip_v_and_h(pretrained=False):
     model.load_state_dict(new_state_dict)
     #model.load_state_dict(resume_ckpt['state_dict'])
 
+def vgg16_netvlad_best_180deg(pretrained=False):
+    model = EmbedNet()
+    resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/vgg16_netvlad_model_best_180deg.pth.tar', map_location=torch.device('cpu'))
+    from collections import OrderedDict
+    new_state_dict = OrderedDict()
+    for k, v in resume_ckpt['state_dict'].items():
+        name = k.replace('module.','') # remove `module.`
+        new_state_dict[name] = v
+    # load params
+    model.load_state_dict(new_state_dict)
+    #model.load_state_dict(resume_ckpt['state_dict'])
 
+
+def vgg16_netvlad_180deg(pretrained=False):
+    model = EmbedNet()
+    resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/vgg16_netvlad_checkpoint_180_deg.pth.tar', map_location=torch.device('cpu'))
+    from collections import OrderedDict
+    new_state_dict = OrderedDict()
+    for k, v in resume_ckpt['state_dict'].items():
+        name = k.replace('module.','') # remove `module.`
+        new_state_dict[name] = v
+    # load params
+    model.load_state_dict(new_state_dict)
+    #model.load_state_dict(resume_ckpt['state_dict'])
 
 
     return model
