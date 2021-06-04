@@ -54,6 +54,8 @@ def vgg16_netvlad_best_180deg(pretrained=False):
     model.load_state_dict(new_state_dict)
     #model.load_state_dict(resume_ckpt['state_dict'])
 
+    return model
+
 
 def vgg16_netvlad_180deg(pretrained=False):
     model = EmbedNet()
