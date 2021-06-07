@@ -9,7 +9,7 @@ class EmbedNet(nn.Module):
         super(EmbedNet, self).__init__()
         device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-        encoder = models.vgg16(pretrained=False)
+        encoder = models.vgg16(pretrained=True)
         # capture only feature part and remove last relu and maxpool
         layers = list(encoder.features.children())[:-2]
         self.encoder = nn.Sequential(*layers)
@@ -28,6 +28,13 @@ def vgg16_netvlad(pretrained=False):
     
 
 
+    return model
+
+def vgg16_netvlad_imagenet(pretrained=False):
+    model = EmbedNet()
+    #resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/vgg16_netvlad.pth.tar', map_location=torch.device('cpu'))
+    #model.load_state_dict(resume_ckpt['state_dict'])
+    
     return model
 
 def vgg16_netvlad_flip_v_and_h(pretrained=False):
