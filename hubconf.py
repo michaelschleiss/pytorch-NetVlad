@@ -23,7 +23,7 @@ class EmbedNet(nn.Module):
 
 class EmbedNetEquiv(nn.Module):
     def __init__(self, dim = 256):
-        super(EmbedNet, self).__init__()
+        super(EmbedNetEquiv, self).__init__()
         from backbone import ReResNet
         self.encoder = ReResNet(depth=50)
         #self.add_module('encoder', encoder)
