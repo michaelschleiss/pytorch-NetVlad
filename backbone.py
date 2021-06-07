@@ -653,7 +653,11 @@ class ReResNet(nn.Module):
         self.feat_dim = res_layer[-1].out_channels
 
         # add global average pooling
+        # add global average pooling
+        self.mp = enn.GroupPooling(res_layer[-1].out_type)
+        #print("res_layer[-1].out_type")
         #self.gap = nn.AdaptiveAvgPool2d(1)
+        #self.gap_pointwise = enn.PointwiseAdaptiveAvgPool(res_layer[-1].out_type,(1))
 
     def make_res_layer(self, **kwargs):
         return ResLayer(**kwargs)
@@ -701,30 +705,19 @@ class ReResNet(nn.Module):
             x = self.norm1(x)
             x = self.relu(x)
         x = self.maxpool(x)
-        outs = []
+
         for i, layer_name in enumerate(self.res_layers):
             res_layer = getattr(self, layer_name)
             x = res_layer(x)
-            #if i in self.out_indices:
-            #    outs.append(x)
-        out = x.tensor
-        return out
-        # the following is modified to incorporate global average pooling
-        """if len(outs) == 1:
-
-            return outs[0].tensor
-        else:
-
-            return tuple(outs)"""
-
-        """if isinstance(inputs, tuple):
-            outs = tuple([self.gap(x) for x in inputs])
-            outs = tuple(
-                [out.view(x.size(0), -1) for out, x in zip(outs, inputs)])
-        elif isinstance(inputs, torch.Tensor):
-            outs = self.gap(inputs)
-            outs = outs.view(inputs.size(0), -1)
-        return outs"""
+       
+        x = self.mp(x)
+        #x = self.gap(x.tensor)
+        #x = self.gap_pointwise(x)
+        #x = x.tensor
+        #x = x.view(x.size(0), -1)
+        #x =  F.normalize(x, p=2, dim=1)
+        return x.tensor
+        
         
 
     def train(self, mode=True):

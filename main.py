@@ -26,7 +26,7 @@ import netvlad
 
 import warnings
 warnings.filterwarnings("ignore")
-class GeneralizedMeanPooling(Module):
+class GeneralizedMeanPooling(nn.Module):
     """Applies a 2D power-average adaptive pooling over an input signal composed of several input planes.
     The function computed is: :math:`f(X) = pow(sum(pow(X, p)), 1/p)`
         - At p = infinity, one gets Max Pooling
@@ -447,7 +447,7 @@ if __name__ == "__main__":
                     p.requires_grad = False
 
     elif opt.arch.lower() == 're_resnet':
-        encoder_dim = 2048
+        encoder_dim = 256
         from backbone import ReResNet
         CHECKPOINT_PATH = 'checkpoints/re_resnet50_c8_batch256-25b16846.pth'
         CHECKPOINT = torch.load(CHECKPOINT_PATH)['state_dict']
