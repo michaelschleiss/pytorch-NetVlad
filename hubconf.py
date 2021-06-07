@@ -14,7 +14,20 @@ class EmbedNet(nn.Module):
         layers = list(encoder.features.children())[:-2]
         self.encoder = nn.Sequential(*layers)
         #self.add_module('encoder', encoder)
-        self.pool = netvlad.NetVLAD(num_clusters=64, dim=256, vladv2=False)
+        self.pool = netvlad.NetVLAD(num_clusters=64, dim=dim, vladv2=False)
+        #self.add_module('pool', net_vlad)
+    def forward(self, x):
+        x = self.encoder(x)
+        x = self.pool(x)
+        return x
+
+class EmbedNetEquiv(nn.Module):
+    def __init__(self, dim = 256):
+        super(EmbedNet, self).__init__()
+        from backbone import ReResNet
+        self.encoder = ReResNet(depth=50)
+        #self.add_module('encoder', encoder)
+        self.pool = netvlad.NetVLAD(num_clusters=64, dim=dim, vladv2=False)
         #self.add_module('pool', net_vlad)
     def forward(self, x):
         x = self.encoder(x)
