@@ -25,9 +25,12 @@ def vgg16_netvlad(pretrained=False):
     model = EmbedNet()
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/vgg16_netvlad.pth.tar', map_location=torch.device('cpu'))
     model.load_state_dict(resume_ckpt['state_dict'])
-    
+    return model
 
-
+def equiv_netvlad(pretrained=False):
+    model = EmbedNet()
+    resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/equiv_3_epochs.pth.tar', map_location=torch.device('cpu'))
+    model.load_state_dict(resume_ckpt['state_dict'])
     return model
 
 def vgg16_netvlad_imagenet(pretrained=False):
