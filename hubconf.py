@@ -27,7 +27,7 @@ class EmbedNetEquiv(nn.Module):
         from backbone import ReResNet
         self.encoder = ReResNet(depth=50)
         #self.add_module('encoder', encoder)
-        self.pool = netvlad.NetVLAD(num_clusters=64, dim=dim, vladv2=False)
+        self.pool = netvlad.NetVLAD(normalize_input=False, num_clusters=64, dim=dim, vladv2=False)
         #self.add_module('pool', net_vlad)
     def forward(self, x):
         x = self.encoder(x)
