@@ -11,7 +11,7 @@ import torch.utils.checkpoint as cp
 from e2cnn import gspaces
 from mmcv.cnn import (constant_init, kaiming_init)
 from torch.nn.modules.batchnorm import _BatchNorm
-
+import torch.nn.functional as F
 
 # Set default Orientation=8, .i.e, the group C8
 # One can change it by passing the env Orientation=xx
