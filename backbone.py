@@ -713,10 +713,10 @@ class ReResNet(nn.Module):
         x = self.mp(x)
         #x = self.gap(x.tensor)
         #x = self.gap_pointwise(x)
-        #x = x.tensor
+        x = x.tensor
         #x = x.view(x.size(0), -1)
-        #x =  F.normalize(x, p=2, dim=1)
-        return x.tensor
+        x =  F.normalize(x, p=2, dim=1)
+        return x
         
         
 
