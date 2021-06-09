@@ -33,6 +33,18 @@ class EmbedNetEquiv(nn.Module):
         x = self.encoder(x)
         x = self.pool(x)
         return x
+    
+class EquivNoVlad(nn.Module):
+    def __init__(self):
+        super(EmbedNetEquiv, self).__init__()
+        from backbone import ReResNet
+        self.model = ReResNet(depth=50)
+        self.pool = nn.AdaptiveMaxPool2d((1,1))
+    def forward(self, x):
+        x = self.encoder(x)
+        x = self.pool(x)
+        return x
+
 
 def vgg16_netvlad(pretrained=False):
     model = EmbedNet()
@@ -52,7 +64,19 @@ def equiv_netvlad_l4(pretrained=False):
     model.load_state_dict(resume_ckpt['state_dict'], strict=False)
     return model
 
+def equiv_netvlad_l4_no_vlad(pretrained=False):
+    model = EquivNoVlad()
+    resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/equiv_17_epochs_l4.pth.tar', map_location=torch.device('cpu'))
+    model.load_state_dict(resume_ckpt['state_dict'], strict=False)
+    return model
+
 def equiv_netvlad_no_gpool(pretrained=False):
+    model = EquivNoVlad()
+    resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/equiv_4_epochs_no_gpool_l4.pth.tar', map_location=torch.device('cpu'))
+    model.load_state_dict(resume_ckpt['state_dict'], strict=False)
+    return model
+
+def equiv_netvlad_no_gpool_no_vlad(pretrained=False):
     model = EmbedNetEquiv(dim=2048)
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/equiv_4_epochs_no_gpool_l4.pth.tar', map_location=torch.device('cpu'))
     model.load_state_dict(resume_ckpt['state_dict'], strict=False)
