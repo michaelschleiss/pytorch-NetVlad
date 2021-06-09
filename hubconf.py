@@ -70,13 +70,13 @@ def equiv_netvlad_l4_no_vlad(pretrained=False):
     model.load_state_dict(resume_ckpt['state_dict'], strict=False)
     return model
 
-def equiv_netvlad_no_gpool(pretrained=False):
+def equiv_netvlad_no_gpool_no_vlad(pretrained=False):
     model = EquivNoVlad()
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/equiv_4_epochs_no_gpool_l4.pth.tar', map_location=torch.device('cpu'))
     model.load_state_dict(resume_ckpt['state_dict'], strict=False)
     return model
 
-def equiv_netvlad_no_gpool_no_vlad(pretrained=False):
+def equiv_netvlad_no_gpool(pretrained=False):
     model = EmbedNetEquiv(dim=2048)
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/equiv_4_epochs_no_gpool_l4.pth.tar', map_location=torch.device('cpu'))
     model.load_state_dict(resume_ckpt['state_dict'], strict=False)
