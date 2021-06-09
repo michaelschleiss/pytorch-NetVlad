@@ -46,7 +46,7 @@ def equiv_netvlad(pretrained=False):
     model.load_state_dict(resume_ckpt['state_dict'], strict=False)
     return model
 
-def equiv_netvlad(pretrained=False):
+def equiv_netvlad_l4(pretrained=False):
     model = EmbedNetEquiv(dim=256)
     resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/equiv_17_epochs_l4.pth.tar', map_location=torch.device('cpu'))
     model.load_state_dict(resume_ckpt['state_dict'], strict=False)
