@@ -20,6 +20,8 @@ class EmbedNet(nn.Module):
     def forward(self, x):
         x = self.encoder(x)
         x = self.pool(x)
+        x = x.view(x.size(0), -1)
+        #x =  F.normalize(x, p=2, dim=1)
         return x
 
 class EmbedNetEquiv(nn.Module):
