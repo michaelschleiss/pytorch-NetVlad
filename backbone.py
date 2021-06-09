@@ -710,7 +710,7 @@ class ReResNet(nn.Module):
             res_layer = getattr(self, layer_name)
             x = res_layer(x)
        
-        x = self.mp(x)
+        #x = self.mp(x)
         #x = self.gap(x.tensor)
         #x = self.gap_pointwise(x)
         #x = x.tensor
