@@ -38,7 +38,7 @@ class EquivNoVlad(nn.Module):
     def __init__(self):
         super(EquivNoVlad, self).__init__()
         from backbone import ReResNet
-        self.model = ReResNet(depth=50)
+        self.encoder = ReResNet(depth=50)
         self.pool = nn.AdaptiveMaxPool2d((1,1))
     def forward(self, x):
         x = self.encoder(x)
