@@ -36,7 +36,7 @@ class EmbedNetEquiv(nn.Module):
     
 class EquivNoVlad(nn.Module):
     def __init__(self):
-        super(EmbedNetEquiv, self).__init__()
+        super(EquivNoVlad, self).__init__()
         from backbone import ReResNet
         self.model = ReResNet(depth=50)
         self.pool = nn.AdaptiveMaxPool2d((1,1))
