@@ -103,7 +103,7 @@ def vgg16_netvlad_flip_v_and_h(pretrained=False):
         name = k.replace('module.','') # remove `module.`
         new_state_dict[name] = v
     # load params
-    model.load_state_dict(new_state_dict)
+    model.load_state_dict(new_state_dict, strict=False)
     #model.load_state_dict(resume_ckpt['state_dict'])
 
     return model
