@@ -14,7 +14,8 @@ class EmbedNet(nn.Module):
         layers = list(encoder.features.children())[:-2]
         self.encoder = nn.Sequential(*layers)
         #self.add_module('encoder', encoder)
-        self.pool = netvlad.NetVLAD(num_clusters=64, dim=dim, vladv2=False)
+        #self.pool = netvlad.NetVLAD(num_clusters=64, dim=dim, vladv2=False)
+        self.pool = nn.AdaptiveMaxPool2d((1,1))
         #self.add_module('pool', net_vlad)
     def forward(self, x):
         x = self.encoder(x)
