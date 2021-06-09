@@ -54,7 +54,7 @@ def equiv_netvlad(pretrained=False):
 
 def equiv_netvlad_no_gpool(pretrained=False):
     model = EmbedNetEquiv(dim=2048)
-    resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/equiv_4_epchs_no_gpool_l4.pth.tar', map_location=torch.device('cpu'))
+    resume_ckpt = torch.hub.load_state_dict_from_url('https://github.com/michaelschleiss/pytorch-NetVlad/releases/download/v1.0/equiv_4_epochs_no_gpool_l4.pth.tar', map_location=torch.device('cpu'))
     model.load_state_dict(resume_ckpt['state_dict'], strict=False)
     return model
 
